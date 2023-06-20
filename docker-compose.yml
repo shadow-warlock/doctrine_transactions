@@ -1,0 +1,29 @@
+version: '3.5'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/dockerfile
+    volumes: &volumes
+      - "./:/app/"
+    networks: &networks
+      - default
+  mysqldb:
+    image: mysql
+    restart: always
+    command: --max_allowed_packet=2G --character_set_server=utf8 --collation_server=utf8_general_ci
+    networks: *networks
+    environment:
+      MYSQL_USER: local_user
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_PASSWORD: pass
+    ports:
+      - "3309:3306"
+    volumes:
+      - ./var/db_folders/mysql:/var/lib/mysql
+      - ./var/userfolder/mysql:/etc/mysql/conf.d
+
+networks:
+  default:
+    name: transactional.net
+    external: true
